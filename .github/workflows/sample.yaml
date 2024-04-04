@@ -1,0 +1,7 @@
+name: learn-github-actions and CI PIPELINE FOR JAVA,MAVEN,DOCKERHUB.
+on:
+  push:
+    branches:
+    - master
+    
+  
