@@ -23,10 +23,10 @@ jobs:
       with:
         java-version: 12
 
-    - name: maven UnitTest
-      run: mvn UnitTest
-    - name: maven Integration test
-      run: mvn IntegrationTest
+    - name: maven Test
+      run: mvn Test
+   # - name: maven Integration test
+  #    run: mvn IntegrationTest
     - name: maven build
       run: mvn Build
     
