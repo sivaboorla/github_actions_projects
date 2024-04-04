@@ -23,12 +23,12 @@ jobs:
       with:
         java-version: 12
 
-    - name: maven Test
-      run: mvn Test
-   # - name: maven Integration test
-  #    run: mvn IntegrationTest
-    - name: maven build
-      run: mvn Build
+    - name: maven validate
+      run: mvn validate
+    - name: maven compile
+      run: mvn compile
+    - name: maven install
+      run: mvn clean install
     
 
     
