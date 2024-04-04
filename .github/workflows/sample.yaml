@@ -23,12 +23,12 @@ jobs:
       with:
         java-version: 12
 
-    - name: maven validate
-      run: mvn validate
-    - name: maven compile
-      run: mvn compile
-    - name: maven target # change accordingly
-      run: mvn clean install
+    - name: maven UnitTest
+      run: mvn UnitTest
+    - name: maven Integration test
+      run: mvn IntegrationTest
+    - name: maven build
+      run: mvn Build
     
 
     
