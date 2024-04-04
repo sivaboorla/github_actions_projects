@@ -5,9 +5,11 @@ name: learn-github-actions and CI PIPELINE FOR JAVA,MAVEN,DOCKERHUB.
 #on is a keyword. it defines an event. 
 on:
   push:
-  #checkout branch 
-    branches: [master]
+    branches:  [master/.github/workflows/sample.yaml]
+  pull_request:
+    branches: [ master ]
 
+    
 #Define the jobs    
 jobs:
   build:
