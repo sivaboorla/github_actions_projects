@@ -28,7 +28,7 @@ jobs:
     - name: maven compile
       run: mvn compile
     - name: maven target # change accordingly
-      run: mvn clean package install
+      run: mvn clean install
     
 
     
