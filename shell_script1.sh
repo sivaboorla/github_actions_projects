@@ -12,9 +12,9 @@ chinna=$(echo "$string" | awk -F '[,.]' '{print $7}')
 sravya=$(echo "$string" | awk -F '[,.]' '{print $11}')
 
 # Print the extracted values
-echo "The variable 'aman' is: $chinna"
-echo "The variable 'siva' is: $siva"
-echo "The variable 'aman' is: $sravya"
+echo "The first person is: $siva"
+echo "The second person is: $chinna"
+echo "The third person is: $sravya"
 
 # Compare if all three values are equal
 if [ "$siva" = "$sravya" ] && [ "$siva" = "$chinna" ]; then
