@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Input values
-values="info.nt.siva.dev,info.nt.siva.dev,info.nt.siva.dev"
+values="variables.txt"
 
 # Split the values by comma
 IFS=',' read -r -a elements <<< "$values"
