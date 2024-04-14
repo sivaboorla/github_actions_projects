@@ -9,7 +9,8 @@ IFS=',' read -r -a elements <<< "$values"
 
 # Extract the third element from each value
 third_elements=()
-for element in "${elements[@]}"; do
+for element in "${elements[@]}";
+do
     IFS='.' read -r -a parts <<< "$element"
     third_elements+=("${parts[2]}")
     echo "$third_elements"
