@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Input strings
+input_strings=("info.nt.siva.devops" "info.nt.chinna.devops" "info.nt.sravya.devops" "info.nt.venkat.devops")
+
+# Iterate over input strings
+for input_string in "${input_strings[@]}"; do
+siva=$(echo "$string" | awk -F '[,.]' '{print $3}')
+
+
 # Input values
 values="variables.txt"
 
