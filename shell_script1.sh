@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the string containing values
-string="info.nt.siva.devops,info.nt.chinna.devops,info.nt.sravya.devops"
+string="info.nt.siva.devops,info.nt.chinna.dev,info.nt.sravya.developer"
 
 
 # Extract the values using awk
@@ -17,8 +17,8 @@ echo "The second person is: $chinna"
 echo "The third person is: $sravya"
 
 # Compare if all three values are equal
-if [ "$siva" = "$sravya" ] && [ "$siva" = "$chinna" ]; then
-    echo "All three values are equal."
+if [ "$siva" = "$sravya" ] || [ "$siva" = "$chinna" ]; then
+    echo "All these values or some values are matched."
 else
-    echo "Not all three values are equal."
+    echo " all these values are not equal."
 fi
