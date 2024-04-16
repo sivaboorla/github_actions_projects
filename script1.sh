@@ -8,9 +8,8 @@ for input_string in "${input_strings[@]}"; do
     #echo "the values are $input_string"
     word=$(echo "$input_string" | awk -F '[.]' '{print $3}')
     #echo " the word values are $word"
-    all_values=$word
-    all_values=$(($word+$all_values))
-
+    declare -a input_array=("$word")  # Declare and initialize the array with the first input value
+    input_array+=("$input_value")  # Add the input value to the array
 
     echo "$all_values"
 
