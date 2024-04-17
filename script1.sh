@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Input strings
-input_strings=("info.nt.siva.devops" "info.nt.chinna.devops" "info.nt.sravya.devops" "info.nt.venkat.devops")
+input_strings=("info.nt.siva.devops" "info.nt.chinna.devops" "info.nt.siva.devops" "info.nt.venkat.devops")
 
 # Iterate over input strings
 for input_string in "${input_strings[@]}"; do
@@ -22,19 +22,22 @@ for input_string in "${input_strings[@]}"; do
 done
 
 for name in "${input_array[@]}"; do
-    echo "the name is $word"
+    echo "the name is $name"
     count=0
     for compared_name in "${input_array[@]}"; do
         echo " the compared word is $compared_name"
         
         if [[ "$compared_name" == "$name" ]]; then
             count=$(( $count+1 ))
-            echo "$count"
+        
         fi
     done
-    if [ $count -gt 1 ]; then
-        echo "The name $word entered more than one entry"
+    if [ $count -ge 2 ]; then
+        echo "The name $name entered more than one entry"
+        break
     else
-        echo "$name  is entered $count time only"
+        echo "$name is entered only one time"
+
     fi
+            
 done
