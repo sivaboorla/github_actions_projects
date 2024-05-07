@@ -1,6 +1,0 @@
-info.nt.siva.devops
-info.nt.chinna.devops
-info.nt.sravya.devops
-info.nt.raju.devops
-info.nt.prudhvi.devops
-
