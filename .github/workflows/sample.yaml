@@ -1,34 +1,42 @@
-#java ci pipeline 
-#name is an optional, it defines the name of pipeline.
-name: learn-github-actions and CI PIPELINE FOR JAVA,MAVEN,DOCKERHUB.
+name: shell
 
-#on is a keyword. it defines an event. 
 on:
   push:
-    branches:  [master]
- # pull_request:
-#    branches: [ master ]
+    branches:  [ master ]
+  pull_request:
+    branches: [ master ]
+  #workflow_diapatch:
+  
 
 
 
     
 #Define the jobs    
 jobs:
-  build:
-    runs-on: ubuntu-latest 
-    steps:
-    - uses: actions/checkout@v4
-    - name: Java jdk setup
-      uses: actions/setup-java@v1
-      with:
-        java-version: 12
+   shell_scripting:
+     runs-on: ubuntu-latest 
+     
+     steps:
+     - name: 'checkout repository on branch: ${{github.REF}}'
+       uses: actions/checkout@v2
+       continue-on-error: ${{ env.CONTINUE_ON_ERROR }}
+       with:
 
-    - name: maven validate
-      run: mvn validate
-    - name: maven compile
-      run: mvn compile
-    - name: maven install
-      run: mvn clean install
+           ref: ${{ github.REF }}
+           fetch-depth: 0
+     - name: Run shell script
+       run: chmod 755 ./script.sh
+       run: ./script.sh
+
+
+
+
+
+       
+    
+    
+
+  
     
     
 
