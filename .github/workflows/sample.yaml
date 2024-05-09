@@ -25,8 +25,9 @@ jobs:
            ref: ${{ github.REF }}
            fetch-depth: 0
      - name: Run shell script
-       run: chmod 755 ./script.sh
-       run: ./script.sh
+       run: |
+         chmod 755 ./script.sh
+         ./script.sh
 
 
 
