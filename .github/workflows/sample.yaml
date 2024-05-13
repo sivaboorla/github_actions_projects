@@ -29,8 +29,8 @@ jobs:
 
      - name: run shell script
        run: |
-          chmod 755 scripts/script.sh
-          bash scripts/script.sh
+          chmod 755 ./script.sh
+          bash ./script.sh
           
 
 
