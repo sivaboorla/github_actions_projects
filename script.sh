@@ -7,13 +7,14 @@ do
     repo_folder=$(echo "$repo" | awk -F '[/.]' '{print $6}')
     echo "The repo folder is $repo_folder "
     USERNAME="sivaboorla" 
-    #curl -u "$USERNAME:$TOKEN" "$repo"
-    git clone https://$USERNAME:$TOKEN@repo
-    # git clone -b master $repo
-    # cd $repo_folder
-    # rm -rf src
-    # git add .
-    # git commit -m "src folder deletion"
+    CLONE_URL=$(https://$USERNAME:$TOKEN@repo)
+    echo "$CLONE_URL"
+    git clone 
+    git clone -b master $repo
+    cd $repo_folder
+    rm -rf src
+    git add .
+    git commit -m "src folder deletion"
 
-    # git push origin master
+    git push origin master
 done
