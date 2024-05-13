@@ -19,10 +19,9 @@ jobs:
      steps:
      - name: Fetch Secrets
        env:
-         PAT_TOKEN: ${{ secrets.PASSWORD }}
-         
-     - name: Run shell script
+         PASSWORD: ${{ secrets.PASSWORD }}
        run: |
+         echo "PASSWORD=$PASSWORD" >> $GITHUB_ENV
          echo "my secret is $PAT_TOKEN "
          chmod 777 ./script.sh
          ./script.sh
