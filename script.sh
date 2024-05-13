@@ -7,8 +7,10 @@ do
     repo_folder=$(echo "$repo" | awk -F '[/.]' '{print $6}')
     echo "The repo folder is $repo_folder "
     USERNAME="sivaboorla"
+    username=$PASSWORD
+    echo " your secret is $PASSWORD"
     echo "YOUR USERNAME IS $USERNAME"
-    echo "YOUR PASSWORD IS ${secreats.PASSWORD"
+    #echo "YOUR PASSWORD IS ${secreats.PASSWORD"
     
     #curl -u "$USERNAME:${PASSWORD}" "$repo"
     # git clone https://$USERNAME:${PASSWORD}@repo
