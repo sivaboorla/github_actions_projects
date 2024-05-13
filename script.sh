@@ -6,14 +6,9 @@ for repo in $(cat $all_repos)
 do
     repo_folder=$(echo "$repo" | awk -F '[/.]' '{print $6}')
     echo "The repo folder is $repo_folder "
-    USERNAME="sivaboorla"
-    username=$PASSWORD
-    echo " your secret is $PASSWORD"
-    echo "YOUR USERNAME IS $USERNAME"
-    #echo "YOUR PASSWORD IS ${secreats.PASSWORD"
-    
-    #curl -u "$USERNAME:${PASSWORD}" "$repo"
-    git clone https://$USERNAME:$username@repo
+    USERNAME="sivaboorla" 
+    #curl -u "$USERNAME:$TOKEN" "$repo"
+    git clone https://$USERNAME:$TOKEN@repo
     # git clone -b master $repo
     # cd $repo_folder
     # rm -rf src
