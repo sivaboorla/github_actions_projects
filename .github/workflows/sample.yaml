@@ -23,7 +23,6 @@ jobs:
        run: |
          echo "PASSWORD=$PASSWORD" >> $GITHUB_ENV
          echo "my secret is $PAT_TOKEN "
-         chmod 755 script.sh
          ./script.sh
 
 
