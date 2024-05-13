@@ -9,7 +9,7 @@ do
     USERNAME="sivaboorla" 
     CLONE_URL=$(https://$USERNAME:$TOKEN@repo)
     echo "$CLONE_URL"
-    git clone -b master $repo
+    git clone -b master $CLONE_URL
     cd $repo_folder
     rm -rf src
     git add .
