@@ -17,12 +17,6 @@ jobs:
      runs-on: ubuntu-latest 
      
      steps:
-     - name: 'checkout repository on branch: ${{github.REF}}'
-       uses: actions/checkout@v2
-       continue-on-error: ${{ env.CONTINUE_ON_ERROR }}
-       with:
-           ref: ${{ github.REF }}
-           fetch-depth: 0
      - name: Fetch Secrets
        env:
          PAT_TOKEN: ${{ secrets.PASSWORD }}
@@ -30,7 +24,7 @@ jobs:
      - name: Run shell script
        run: |
          echo "my secret is $PAT_TOKEN "
-         chmod 777 ../script.sh
+         chmod 777 ./script.sh
          ./script.sh
 
 
