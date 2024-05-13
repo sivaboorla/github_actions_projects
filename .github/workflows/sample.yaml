@@ -25,10 +25,7 @@ jobs:
          echo "my secret is $PAT_TOKEN "
 
      - name: run shell script
-       run: |
-         echo "hello world"
-         pwd
-         ./script.sh
+       run: ./script.sh
          
 
 
