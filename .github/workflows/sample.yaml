@@ -30,7 +30,7 @@ jobs:
      - name: run shell script
        run: |
           chmod 755 ./script.sh
-          bash ./script.sh
+          ./script.sh
           
 
 
