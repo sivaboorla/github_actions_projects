@@ -24,24 +24,29 @@ jobs:
 
            ref: ${{ github.REF }}
            fetch-depth: 0
-     - name: Run shell script
+     - name: Fetch Secrets
        env:
          TOKEN: ${{ secrets.PASSWORD }}
-         USER: ${{ secrets.USERNAME }}
+         
+     - name: Run shell script
        run: |
-         all_repos="./repos.txt"
-         for repo in $(cat $all_repos)
-         do
-           repo_folder=$(echo "$repo" | awk -F '[/.]' '{print $6}')
-           echo "The repo folder is $repo_folder "
-           git clone https://$USERNAME:$username@repo
-           git clone -b master $repo
-           cd $repo_folder
-           rm -rf src
-           git add .
-           git commit -m "src folder deletion"
-           git push origin master
-         done
+         chmod 777 script.sh
+         ./script.sh
+         
+         
+         # all_repos="./repos.txt"
+         # for repo in $(cat $all_repos)
+         # do
+         #   repo_folder=$(echo "$repo" | awk -F '[/.]' '{print $6}')
+         #   echo "The repo folder is $repo_folder "
+         #   git clone https://$USERNAME:$username@repo
+         #   git clone -b master $repo
+         #   cd $repo_folder
+         #   rm -rf src
+         #   git add .
+         #   git commit -m "src folder deletion"
+         #   git push origin master
+         # done
 
 
 
