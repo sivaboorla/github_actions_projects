@@ -25,10 +25,10 @@ jobs:
          echo "my secret is $PAT_TOKEN "
 
      - name: run shell script
-        run: |
+       run: |
+          chmod 755 scripts/script.sh
           bash scripts/script.sh
-         
-
+          
 
 
   
