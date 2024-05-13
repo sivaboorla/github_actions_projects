@@ -26,6 +26,7 @@ jobs:
 
      - name: run shell script
        run: |
+         echo "hello world"
          chmod 755 script.sh
          ./script.sh
 
