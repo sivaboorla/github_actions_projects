@@ -13,7 +13,7 @@ do
     #echo "YOUR PASSWORD IS ${secreats.PASSWORD"
     
     #curl -u "$USERNAME:${PASSWORD}" "$repo"
-    # git clone https://$USERNAME:${PASSWORD}@repo
+    git clone https://$USERNAME:$username@repo
     # git clone -b master $repo
     # cd $repo_folder
     # rm -rf src
