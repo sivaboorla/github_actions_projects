@@ -1,0 +1,65 @@
+name: shell
+
+on:
+   workflow_dispatch:
+  
+
+
+
+    
+#Define the jobs    
+jobs:
+   shell_scripting:
+     runs-on: ubuntu-latest 
+     
+     steps:
+     - name: Checkout code
+       uses: actions/checkout@v2 
+       
+     - name: Fetch Secrets
+       env:
+         PASSWORD: ${{ secrets.PASSWORD }}
+       run: |
+         echo "PASSWORD=$PASSWORD" >> $GITHUB_ENV
+         echo "my secret is $PAT_TOKEN "
+
+     - name: run shell script
+       run: |
+          /usr/bin/git config --global --add safe.directory $GITHUB_WORKSPACE
+          all_repos="./List_files/repos.txt
+          for repo in $(cat $all_repos)
+          do
+            repo_folder=$(echo "$repo" | awk -F '[/]' {print $6}')
+            echo "the repo folder is $repo_folder"
+            git config --global user.email "siva.2@yahoo.com"
+            git config --global user.name "sivaboorla"
+            mkdir clone
+            cd clone
+            git clone -b master https://sivaboorla:${{ secrets.PASSWORD }}@github.com/$repo_folder
+
+            echo "***********"$repo_folder "*********"
+            cd $repo_folder
+            cd src
+            folders="$ls -d */"
+            echo $folders
+            for folder in "$folders";
+            do
+              folder_name=${folders%/}
+              echo $folder_name
+              if [ -d "$folder_name" ]; then
+                echo $folder_name  >>$GITHUB_WORKSPACE/artifact.txt
+                cd $folder_name
+                ls -al | xargs wc -l | tail -1 >> $GITHUB_WORKSPACE/artifact.txt
+                echo "================================================"
+              fi
+            done
+            echo "========================================================"
+          done  
+              
+            
+            
+          
+          
+
+
+  
