@@ -29,7 +29,7 @@ jobs:
           all_repos="./List_files/repos.txt"
           for repo in $(cat $all_repos)
           do
-            repo_folder=$(echo "$repo" | awk -F '[/]' {print $6}')
+            repo_folder=$(echo "$repo" | awk -F '[/]' {print $5}')
             echo "the repo folder is $repo_folder"
             git config --global user.email "siva.2@yahoo.com"
             git config --global user.name "sivaboorla"
