@@ -26,6 +26,8 @@ jobs:
      - name: run shell script
        run: |
           /usr/bin/git config --global --add safe.directory $GITHUB_WORKSPACE
+          git config --global user.email "siva.2@yahoo.com"
+          git config --global user.name "sivaboorla"
           all_repos=$(./List_files/repos.txt)
           echo "all_repos file ouput is $all_repos"
           for repo in $(cat $all_repos);
