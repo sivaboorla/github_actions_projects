@@ -37,6 +37,7 @@ jobs:
             echo "the repo folder is $repo_folder"
             git config --global user.email "siva.2@yahoo.com"
             git config --global user.name "sivaboorla"
+            git config credentials.helper 'store --file ~/.git-credentials'
             mkdir clone
             cd clone
             git clone -b master https://sivaboorla:${{ secrets.PASSWORD }}@github.com/$repo_folder
