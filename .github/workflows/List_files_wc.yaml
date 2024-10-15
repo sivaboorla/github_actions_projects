@@ -27,7 +27,7 @@ jobs:
        run: |
           /usr/bin/git config --global --add safe.directory $GITHUB_WORKSPACE
           all_repos="./List_files/repos.txt"
-          for repo in $(cat $all_repos)
+          for repo in $(cat $all_repos);
           do
             repo_folder=$(echo "$repo" | awk -F '[/]' {print $5}')
             echo "the repo folder is $repo_folder"
@@ -40,7 +40,7 @@ jobs:
             echo "***********"$repo_folder "*********"
             cd $repo_folder
             cd src
-            folders="$ls -d */"
+            folders=$(ls -d */)
             echo $folders
             for folder in "$folders";
             do
