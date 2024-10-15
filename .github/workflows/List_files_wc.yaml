@@ -26,7 +26,7 @@ jobs:
      - name: run shell script
        run: |
           /usr/bin/git config --global --add safe.directory $GITHUB_WORKSPACE
-          all_repos="./List_files/repos.txt"
+          all_repos=$(./List_files/repos.txt)
           echo "all_repos file ouput is $all_repos"
           for repo in $(cat $all_repos);
           do
