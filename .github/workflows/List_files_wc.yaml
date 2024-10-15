@@ -31,7 +31,7 @@ jobs:
           chmod 777 ./List_files/repos.txt
           #all_repos=$(./List_files/repos.txt)
           #echo "all_repos file ouput is $all_repos"
-          while IFS= read -r repo_folder;
+          while IFS= read -r repo;
           do
             repo_folder=$(echo "$repo" | awk -F '[/]' '{print $5}')
             echo "the repo folder is $repo_folder"
