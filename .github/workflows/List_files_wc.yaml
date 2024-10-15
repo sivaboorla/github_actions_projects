@@ -31,7 +31,7 @@ jobs:
           chmod 777 ./List_files/repos.txt
           #all_repos=$(./List_files/repos.txt)
           #echo "all_repos file ouput is $all_repos"
-          for repo in $(cat $(./List_files/repos.txt));
+          while IFS= read -r repo_folder;
           do
             repo_folder=$(echo "$repo" | awk -F '[/]' '{print $5}')
             echo "the repo folder is $repo_folder"
@@ -59,11 +59,15 @@ jobs:
               fi
             done
             echo "========================================================"
-          done  
+          done < ./List_files/repos.txt
               
-            
-            
-          
+#           #!/bin/bash
+
+# while IFS= read -r repo; do
+#     echo "Processing: $repo"  # Debugging line
+#     git clone "$repo"
+# done 
+
           
 
 
