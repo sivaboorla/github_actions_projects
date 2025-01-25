@@ -1,4 +1,4 @@
-name: shell
+name: Line of code
 
 on:
    workflow_dispatch:
