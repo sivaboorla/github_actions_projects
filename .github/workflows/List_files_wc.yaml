@@ -16,12 +16,12 @@ jobs:
      - name: Checkout code
        uses: actions/checkout@v2 
        
-     - name: Fetch Secrets
-       env:
-         PASSWORD: ${{ secrets.PASSWORD }}
-       run: |
-         echo "PASSWORD=$PASSWORD" >> $GITHUB_ENV
-         echo "my secret is $PAT_TOKEN "
+     # - name: Fetch Secrets
+     #   env:
+     #     PASSWORD: ${{ secrets.PASSWORD }}
+     #   run: |
+     #     echo "PASSWORD=$PASSWORD" >> $GITHUB_ENV
+     #     echo "my secret is $PAT_TOKEN "
 
      - name: run shell script
        run: |
