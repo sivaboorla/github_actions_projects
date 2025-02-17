@@ -1,0 +1,71 @@
+name: Fetching Data from Repos
+
+on:
+   workflow_dispatch:
+  
+
+
+
+    
+#Define the jobs    
+jobs:
+   shell_scripting:
+     runs-on: ubuntu-latest 
+     
+     steps:
+     - name: Checkout code
+       uses: actions/checkout@v2 
+       
+     - name: Fetching Secrets
+       env:
+         PASSWORD: ${{ secrets.PASSWORD }}
+       run: |
+         echo "PASSWORD=$PASSWORD" >> $GITHUB_ENV
+         echo "my secret is $PAT_TOKEN "
+
+     - name: run shell script
+       run: |
+          /usr/bin/git config --global --add safe.directory $GITHUB_WORKSPACE
+          #git config --global user.email "siva.2@yahoo.com"
+          #git config --global user.name "sivaboorla"
+          #chmod 777 ./List_files/repos.txt
+          #all_repos=$(./List_files/repos.txt)
+          #echo "all_repos file ouput is $all_repos"
+          echo "repo_name;Lines_of_code;
+          api_url="https://api.github.com/"
+          while IFS= read -r repo;
+          do
+            repo_folder=$(echo "$repo" | awk -F '[/]' '{print $5}')
+            echo "the repo folder is $repo_folder"
+            git config --global user.email "siva.2@yahoo.com"
+            git config --global user.name "sivaboorla"
+            git config credentials.helper 'store --file ~/.git-credentials'
+            mkdir clone
+            cd clone
+            git clone -b master https://sivaboorla:${{ secrets.PASSWORD }}@github.com/$repo_folder
+
+            echo "***********"$repo_folder "*********"
+            cd $repo_folder
+            cd src
+            folders=$(ls -d */)
+            echo $folders
+            for folder in "$folders";
+            do
+              folder_name=${folders%/}
+              echo $folder_name
+              if [ -d "$folder_name" ]; then
+                echo $folder_name  >>$GITHUB_WORKSPACE/artifact.txt
+                cd $folder_name
+                ls -al | xargs wc -l | tail -1 >> $GITHUB_WORKSPACE/artifact.txt
+                echo "================================================"
+              fi
+            done
+            echo "========================================================"
+          done < ./List_files/repos.txt
+              
+#           #!/bin/bash
+
+# while IFS= read -r repo; do
+#     echo "Processing: $repo"  # Debugging line
+#     git clone "$repo"
+# done 
