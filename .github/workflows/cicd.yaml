@@ -1,1 +1,20 @@
-
+name: Fetching Data from Repos
+on:
+  workflow_dispatch:
+  
+  push:
+    branches:
+    - main
+    
+  pull_request:
+    branches:
+    - releases/*
+  
+#Define the jobs    
+jobs:
+  compile:
+    runs-on: ubuntu-22.04test 
+     
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2 
