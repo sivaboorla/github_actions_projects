@@ -12,9 +12,8 @@ jobs:
    shell_scripting:
      runs-on: ubuntu-latest 
      
-     steps:
-     - name: Checkout code
-       uses: actions/checkout@v2 
+   
+
        
      # - name: Fetch Secrets
      #   env:
@@ -22,7 +21,7 @@ jobs:
      #   run: |
      #     echo "PASSWORD=$PASSWORD" >> $GITHUB_ENV
      #     echo "my secret is $PAT_TOKEN "
-
+     steps:
      - name: run shell script
        run: |
           /usr/bin/git config --global --add safe.directory $GITHUB_WORKSPACE
@@ -30,7 +29,7 @@ jobs:
           #git config --global user.name "sivaboorla"
           chmod 777 ./List_files/repos.txt
           all_repos=$(./List_files/repos.txt)
-          echo "all_repos file ouput is $all_repos"
+          echo "all_repos file output is $all_repos"
           while IFS= read -r repo;
           do
             repo_folder=$(echo "$repo" | awk -F '[/]' '{print $5}')
@@ -59,7 +58,7 @@ jobs:
               fi
             done
             echo "========================================================"
-          done < ./List_files/repos.txt
+          done < ./List_files/repos.txt  
               
 #           #!/bin/bash
 
