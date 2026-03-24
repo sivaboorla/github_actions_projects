@@ -28,6 +28,7 @@ jobs:
           /usr/bin/git config --global --add safe.directory $GITHUB_WORKSPACE
           echo " above results are current working directory"
           pwd
+          cd ..
           echo "files in current working directory"
           ls -a
           #git config --global user.email "siva.2@yahoo.com"
