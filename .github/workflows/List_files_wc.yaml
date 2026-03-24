@@ -29,7 +29,7 @@ jobs:
           echo " above results are current working directory"
           pwd
           echo "files in current working directory"
-          
+          ls -a
           #git config --global user.email "siva.2@yahoo.com"
           #git config --global user.name "sivaboorla"
           chmod 777 ./List_files/repos.txt
