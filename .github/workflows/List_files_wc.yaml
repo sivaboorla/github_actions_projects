@@ -22,7 +22,7 @@ jobs:
           
           /usr/bin/git config --global --add safe.directory $GITHUB_WORKSPACE
           ORG_NAME="https://github.com/sivaboorla"
-          GITHUB_TOKEN: ${{ secrets.PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.API_TOKEN }}
           OUTPUT_FILE="repos.txt"
           PAGE=1
           PER_PAGE=100
