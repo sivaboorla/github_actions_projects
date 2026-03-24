@@ -3,17 +3,12 @@ name: Line of code
 on:
    workflow_dispatch:
   
-
-
-
     
 #Define the jobs    
 jobs:
    shell_scripting:
      runs-on: ubuntu-latest 
      
-   
-
        
      # - name: Fetch Secrets
      #   env:
@@ -26,53 +21,27 @@ jobs:
        run: |
           
           /usr/bin/git config --global --add safe.directory $GITHUB_WORKSPACE
-          echo " above results are current working directory"
-          pwd
-          cd ..
-          echo "files in current working directory"
-          ls -a
-          #git config --global user.email "siva.2@yahoo.com"
-          #git config --global user.name "sivaboorla"
-          chmod 777 ./List_files/repos.txt
-          all_repos=$(./List_files/repos.txt)
-          echo "all_repos file output is $all_repos"
-          while IFS= read -r repo;
-          do
-            repo_folder=$(echo "$repo" | awk -F '[/]' '{print $5}')
-            echo "the repo folder is $repo_folder"
-            git config --global user.email "siva.2@yahoo.com"
-            git config --global user.name "sivaboorla"
-            git config credentials.helper 'store --file ~/.git-credentials'
-            mkdir clone
-            cd clone
-            git clone -b master https://sivaboorla:${{ secrets.PASSWORD }}@github.com/$repo_folder
-
-            echo "***********"$repo_folder "*********"
-            cd $repo_folder
-            cd src
-            folders=$(ls -d */)
-            echo $folders
-            for folder in "$folders";
-            do
-              folder_name=${folders%/}
-              echo $folder_name
-              if [ -d "$folder_name" ]; then
-                echo $folder_name  >>$GITHUB_WORKSPACE/artifact.txt
-                cd $folder_name
-                ls -al | xargs wc -l | tail -1 >> $GITHUB_WORKSPACE/artifact.txt
-                echo "================================================"
-              fi
-            done
-            echo "========================================================"
-          done < ./List_files/repos.txt  
-              
-#           #!/bin/bash
-
-# while IFS= read -r repo; do
-#     echo "Processing: $repo"  # Debugging line
-#     git clone "$repo"
-# done 
-
+          ORG_NAME="https://github.com/sivaboorla"
+          GITHUB_TOKEN: ${{ secrets.PASSWORD }}
+          OUTPUT_FILE="repos.txt"
+          PAGE=1
+          PER_PAGE=100
+          # Clear file before writing (optional)
+          > "$OUTPUT_FILE"
+          while true; do
+             RESPONSE=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+             "https://api.github.com/orgs/$ORG_NAME/repos?per_page=$PER_PAGE&page=$PAGE")
+             # Check if response is empty or an empty JSON array
+             if [[ "$RESPONSE" == "[]" || -z "$RESPONSE" ]]; then
+                break  # Stop if no more repositories
+             fi
+             # Extract repository names
+             echo "$RESPONSE" | jq -r '.[].full_name' >> "$OUTPUT_FILE"
+             ((PAGE++))
+          done
+          echo "Repositories saved to $OUTPUT_FILE"
+           
+        
           
 
 
