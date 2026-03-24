@@ -24,8 +24,12 @@ jobs:
      steps:
      - name: run shell script
        run: |
+          
           /usr/bin/git config --global --add safe.directory $GITHUB_WORKSPACE
+          echo " above results are current working directory"
           pwd
+          echo "files in current working directory"
+          
           #git config --global user.email "siva.2@yahoo.com"
           #git config --global user.name "sivaboorla"
           chmod 777 ./List_files/repos.txt
