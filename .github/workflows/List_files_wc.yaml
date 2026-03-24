@@ -25,6 +25,7 @@ jobs:
      - name: run shell script
        run: |
           /usr/bin/git config --global --add safe.directory $GITHUB_WORKSPACE
+          pwd
           #git config --global user.email "siva.2@yahoo.com"
           #git config --global user.name "sivaboorla"
           chmod 777 ./List_files/repos.txt
