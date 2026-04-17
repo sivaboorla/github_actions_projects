@@ -38,7 +38,7 @@ jobs:
           from datetime import datetime
           from collections import defaultdict
           
-          org_name = os.getenv('ORG_NAME')
+          org_name = os.getenv('https://github.com/sivaboorla')
           report_lines = []
           
           # Report header
@@ -197,7 +197,7 @@ jobs:
           fi
 
       - name: Upload report artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: reports
           path: reports.txt
