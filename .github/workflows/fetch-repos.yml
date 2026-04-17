@@ -1,0 +1,109 @@
+name: Fetch Repositories
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  fetch-repos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Create repos directory
+        run: mkdir -p repos
+
+      - name: Fetch all repositories from organization
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ORG_NAME: ${{ github.repository_owner }}
+        run: |
+          python3 << 'EOF'
+          import subprocess
+          import json
+          import os
+          
+          org_name = os.getenv('ORG_NAME')
+          
+          # Fetch all repositories from the organization
+          cmd = f'gh repo list {org_name} --limit 1000 --json name,owner,url,isPrivate,description,createdAt,updatedAt --no-truncate'
+          result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+          
+          if result.returncode != 0:
+              print(f"Error fetching repos: {result.stderr}")
+              exit(1)
+          
+          repos_data = json.loads(result.stdout)
+          
+          # Fetch branches for each repository
+          repos_with_branches = []
+          for repo in repos_data:
+              repo_name = repo['name']
+              owner = repo['owner']['login']
+              
+              # Fetch branches for this repo
+              branch_cmd = f'gh repo view {owner}/{repo_name} --json defaultBranchRef,refs --jq ".refs"'
+              branch_result = subprocess.run(branch_cmd, shell=True, capture_output=True, text=True)
+              
+              branches = []
+              if branch_result.returncode == 0:
+                  try:
+                      branches_data = json.loads(branch_result.stdout)
+                      if isinstance(branches_data, list):
+                          branches = [{"name": b.get("name"), "oid": b.get("oid")} for b in branches_data]
+                  except:
+                      print(f"Could not parse branches for {repo_name}")
+              
+              # If no branches found, try alternative method
+              if not branches:
+                  alt_cmd = f'gh api repos/{owner}/{repo_name}/branches --paginate'
+                  alt_result = subprocess.run(alt_cmd, shell=True, capture_output=True, text=True)
+                  if alt_result.returncode == 0:
+                      try:
+                          branches = json.loads(alt_result.stdout)
+                          branches = [{"name": b.get("name"), "oid": b.get("commit", {}).get("sha")} for b in branches]
+                      except:
+                          pass
+              
+              repo['branches'] = branches if branches else [{"name": "main", "oid": ""}]
+              repos_with_branches.append(repo)
+          
+          # Save to JSON file
+          output_file = 'repos/repositories.json'
+          with open(output_file, 'w') as f:
+              json.dump(repos_with_branches, f, indent=2)
+          
+          print(f"✓ Fetched {len(repos_with_branches)} repositories")
+          print(f"✓ Saved to {output_file}")
+          EOF
+
+      - name: Display repositories count
+        run: |
+          count=$(python3 -c "import json; data = json.load(open('repos/repositories.json')); print(len(data))")
+          echo "Total repositories: $count"
+
+      - name: Upload repositories artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: repositories-json
+          path: repos/repositories.json
+          retention-days: 30
+
+      - name: Commit and push repositories JSON
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          if git diff --quiet repos/repositories.json 2>/dev/null || [ ! -f repos/repositories.json ]; then
+            git add repos/repositories.json
+            git commit -m "chore: update repositories list [skip ci]" || true
+            git push
+          fi

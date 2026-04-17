@@ -1,0 +1,215 @@
+name: Generate Repositories Report
+
+on:
+  workflow_run:
+    workflows: ["Fetch Repositories"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download repositories artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: repositories-json
+          path: repos
+        continue-on-error: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Generate repository analysis report
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ORG_NAME: ${{ github.repository_owner }}
+        run: |
+          python3 << 'EOF'
+          import json
+          import subprocess
+          import os
+          from datetime import datetime
+          from collections import defaultdict
+          
+          org_name = os.getenv('ORG_NAME')
+          report_lines = []
+          
+          # Report header
+          report_lines.append("=" * 120)
+          report_lines.append("GITHUB ORGANIZATION REPOSITORY ANALYSIS REPORT")
+          report_lines.append(f"Organization: {org_name}")
+          report_lines.append(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}")
+          report_lines.append("=" * 120)
+          report_lines.append("")
+          
+          # Load repositories data
+          repos_file = 'repos/repositories.json'
+          if not os.path.exists(repos_file):
+              # Fallback: fetch repos if file doesn't exist
+              cmd = f'gh repo list {org_name} --limit 1000 --json name,owner,url,description,createdAt --no-truncate'
+              result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+              repos_data = json.loads(result.stdout) if result.returncode == 0 else []
+          else:
+              with open(repos_file, 'r') as f:
+                  repos_data = json.load(f)
+          
+          if not repos_data:
+              report_lines.append("ERROR: No repositories found!")
+              with open('reports.txt', 'w') as f:
+                  f.write('\n'.join(report_lines))
+              exit(1)
+          
+          report_lines.append(f"Total Repositories: {len(repos_data)}")
+          report_lines.append("")
+          
+          total_files = 0
+          total_size = 0
+          file_stats = defaultdict(lambda: {"count": 0, "size": 0, "word_count": 0})
+          
+          # Process each repository
+          for idx, repo in enumerate(repos_data, 1):
+              repo_name = repo.get('name', 'Unknown')
+              owner = repo.get('owner', {})
+              owner_name = owner.get('login', org_name) if isinstance(owner, dict) else org_name
+              repo_url = repo.get('url', '')
+              description = repo.get('description', 'N/A')
+              created_at = repo.get('createdAt', 'N/A')
+              branches = repo.get('branches', [{"name": "main"}])
+          
+              report_lines.append(f"\n{'─' * 120}")
+              report_lines.append(f"REPOSITORY #{idx}: {repo_name}")
+              report_lines.append(f"{'─' * 120}")
+              report_lines.append(f"URL: {repo_url}")
+              report_lines.append(f"Description: {description}")
+              report_lines.append(f"Created: {created_at}")
+              report_lines.append(f"Branches Available: {len(branches)}")
+              report_lines.append("")
+          
+              # Process each branch
+              for branch_idx, branch in enumerate(branches[:10], 1):  # Limit to first 10 branches
+                  branch_name = branch.get('name', 'main')
+                  
+                  report_lines.append(f"  Branch {branch_idx}: {branch_name}")
+                  report_lines.append("  " + "─" * 116)
+          
+                  # Get files in this branch
+                  files_cmd = f'gh api repos/{owner_name}/{repo_name}/git/trees/{branch_name}?recursive=1 --jq ".tree[]"'
+                  files_result = subprocess.run(files_cmd, shell=True, capture_output=True, text=True)
+          
+                  branch_stats = defaultdict(lambda: {"count": 0, "size": 0})
+                  branch_total_files = 0
+                  branch_total_size = 0
+          
+                  if files_result.returncode == 0:
+                      try:
+                          files_data = json.loads(files_result.stdout)
+                          if isinstance(files_data, list):
+                              for file_obj in files_data:
+                                  if file_obj.get('type') == 'blob':
+                                      file_path = file_obj.get('path', '')
+                                      file_size = file_obj.get('size', 0)
+                                      
+                                      # Get file extension
+                                      if '.' in file_path:
+                                          file_ext = file_path.rsplit('.', 1)[1].lower()
+                                      else:
+                                          file_ext = 'no-extension'
+                                      
+                                      branch_stats[file_ext]["count"] += 1
+                                      branch_stats[file_ext]["size"] += file_size
+                                      branch_total_files += 1
+                                      branch_total_size += file_size
+                      except json.JSONDecodeError:
+                          pass
+          
+                  if branch_total_files > 0:
+                      report_lines.append(f"    Total Files: {branch_total_files}")
+                      report_lines.append(f"    Total Size: {branch_total_size:,} bytes ({branch_total_size / (1024*1024):.2f} MB)")
+                      report_lines.append(f"    File Type Breakdown:")
+          
+                      # Sort by count
+                      sorted_types = sorted(branch_stats.items(), key=lambda x: x[1]["count"], reverse=True)
+                      for file_type, stats in sorted_types[:15]:  # Show top 15 file types
+                          count = stats["count"]
+                          size = stats["size"]
+                          size_mb = size / (1024*1024)
+                          report_lines.append(f"      .{file_type:20} : {count:5} files | {size:12,} bytes ({size_mb:8.2f} MB)")
+          
+                      # Update totals
+                      for file_type, stats in branch_stats.items():
+                          file_stats[file_type]["count"] += stats["count"]
+                          file_stats[file_type]["size"] += stats["size"]
+                          total_files += stats["count"]
+                          total_size += stats["size"]
+                  else:
+                      report_lines.append(f"    No files or unable to fetch data")
+          
+                  report_lines.append("")
+          
+          # Summary section
+          report_lines.append("\n" + "=" * 120)
+          report_lines.append("OVERALL SUMMARY")
+          report_lines.append("=" * 120)
+          report_lines.append(f"Total Files Across All Repos/Branches: {total_files:,}")
+          report_lines.append(f"Total Size Across All Repos/Branches: {total_size:,} bytes ({total_size / (1024*1024):.2f} MB)")
+          report_lines.append("")
+          
+          if file_stats:
+              report_lines.append("File Type Distribution:")
+              sorted_types = sorted(file_stats.items(), key=lambda x: x[1]["count"], reverse=True)
+              for file_type, stats in sorted_types[:30]:
+                  count = stats["count"]
+                  size = stats["size"]
+                  size_mb = size / (1024*1024)
+                  report_lines.append(f"  .{file_type:20} : {count:7} files | {size:14,} bytes ({size_mb:10.2f} MB)")
+          
+          report_lines.append("")
+          report_lines.append("=" * 120)
+          report_lines.append("END OF REPORT")
+          report_lines.append("=" * 120)
+          
+          # Write report
+          with open('reports.txt', 'w') as f:
+              f.write('\n'.join(report_lines))
+          
+          print("✓ Report generated successfully in reports.txt")
+          print(f"✓ Total files analyzed: {total_files:,}")
+          print(f"✓ Total size: {total_size / (1024*1024):.2f} MB")
+          EOF
+
+      - name: Display report
+        run: |
+          if [ -f reports.txt ]; then
+            head -100 reports.txt
+            echo ""
+            echo "[... Report truncated for display ...]"
+            echo ""
+            tail -20 reports.txt
+          else
+            echo "Report file not found"
+          fi
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: reports
+          path: reports.txt
+          retention-days: 90
+
+      - name: Commit and push report
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          if [ -f reports.txt ]; then
+            git add reports.txt
+            git commit -m "chore: update repositories report [skip ci]" || true
+            git push
+          fi
