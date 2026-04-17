@@ -31,7 +31,7 @@ jobs:
           import json
           import os
           
-          org_name = os.getenv('ORG_NAME')
+          org_name = os.getenv('https://github.com/sivaboorla')
           
           # Fetch all repositories from the organization
           cmd = f'gh repo list {org_name} --limit 1000 --json name,owner,url,isPrivate,description,createdAt,updatedAt --no-truncate'
